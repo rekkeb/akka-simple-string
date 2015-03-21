@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>akka</groupId>
-    <artifactId>reverse</artifactId>
+    <artifactId>akka-simple-string</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
