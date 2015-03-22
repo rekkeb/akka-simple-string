@@ -1,6 +1,9 @@
 package akka.tests;
 
-import akka.actor.*;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.actor.Reverser;
 import akka.message.Message;
 import akka.testkit.JavaTestKit;
 import akka.testkit.TestActorRef;
@@ -56,7 +59,7 @@ public class TestsReverser {
 
             reverser.tell("abcde", getRef());
 
-            expectMsgEquals(Duration.Zero(), Message.DONE);
+            expectMsgEquals(Duration.create(1000, "millis"), Message.DONE);
 
         }};
     }
