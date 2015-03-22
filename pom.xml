@@ -11,6 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <akka.version>2.3.9</akka.version>
+        <junit.version>4.11</junit.version>
     </properties>
 
     <dependencies>
@@ -19,6 +20,20 @@
             <artifactId>akka-actor_2.10</artifactId>
             <version>${akka.version}</version>
         </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-testkit_2.10</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+
+
     </dependencies>
 
 </project>
