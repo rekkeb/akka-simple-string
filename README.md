@@ -12,5 +12,4 @@ It consists on:
 The Stringer Actor, receives a String from the Main class, splits it and sends each of the chunks to a Reverser Actor.
 The Reverser Actor, prints in console the chunk in reverse order and sends a message to its Sender Actor to notify that its work is done.
 
-When all of the Reverser Actors has finished their work, the Stringer Actor shutdown the system.
-
+When all of the Reverser Actors have finished their work, the Stringer Actor shutdown the system.
