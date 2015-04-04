@@ -1,6 +1,7 @@
 package akka.spring;
 
 import akka.actor.ActorSystem;
+import akka.actor.Reverser;
 import akka.actor.Stringer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -37,5 +38,11 @@ public class AppConfiguration {
     @Scope("prototype")
     public Stringer stringer(){
         return new Stringer("This string is going to be split and reversed");
+    }
+
+    @Bean
+    @Scope("prototype")
+    public Reverser reverser(){
+        return new Reverser();
     }
 }

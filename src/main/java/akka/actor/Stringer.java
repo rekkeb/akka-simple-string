@@ -3,6 +3,7 @@ package akka.actor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.message.Message;
+import akka.spring.SpringExtension;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +38,9 @@ public class Stringer extends UntypedActor {
             log.info("Split: {}", Arrays.toString(dataSplit));
 
             for (String chunk : dataSplit) {
-                getContext().actorOf(Props.create(Reverser.class)).tell(chunk, getSelf());
+                //Creates actors using Spring Beans
+                getContext().actorOf(SpringExtension.SpringExtProvider.get(getContext().system()).props("reverser"))
+                        .tell(chunk, getSelf());
             }
 
             //getSender().tell(Message.DONE, getSelf());
