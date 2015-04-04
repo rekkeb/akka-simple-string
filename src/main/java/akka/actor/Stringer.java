@@ -3,6 +3,8 @@ package akka.actor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.message.Message;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
@@ -18,36 +20,39 @@ public class Stringer extends UntypedActor {
     private int numberOfChunks = 0;
     private int chunksProcessed = 0;
 
+    public Stringer(){
+        this.data = "This string is going to be split and reversed. Default Constructor";
+    }
+
     public Stringer(String data) {
         this.data = data;
     }
 
     @Override
     public void onReceive(Object msg) throws Exception {
-        if (msg == Message.SPLIT){
+        if (msg == Message.SPLIT) {
             //Splits the data and sends each of the chunks to a new actor
             String[] dataSplit = data.split(" ");
             numberOfChunks = dataSplit.length;
             log.info("Split: {}", Arrays.toString(dataSplit));
 
-            for (String chunk : dataSplit){
+            for (String chunk : dataSplit) {
                 getContext().actorOf(Props.create(Reverser.class)).tell(chunk, getSelf());
             }
 
             //getSender().tell(Message.DONE, getSelf());
             //getContext().stop(getSelf());
         }
-        if (msg == Message.DONE){
+        if (msg == Message.DONE) {
             chunksProcessed++;
-            if(numberOfChunks == chunksProcessed){
+            if (numberOfChunks == chunksProcessed) {
                 log.info("String has been processed");
 
                 //getContext().stop(getSelf());
 
                 getContext().system().shutdown();
             }
-        }
-        else{
+        } else {
             unhandled(msg);
         }
     }
