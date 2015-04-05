@@ -2,10 +2,20 @@ package main;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import akka.message.Message;
 import akka.spring.AppConfiguration;
 import akka.spring.SpringExtension;
+import akka.util.Timeout;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.FiniteDuration;
+
+import java.util.concurrent.TimeUnit;
+
+import static akka.pattern.Patterns.ask;
 
 /**
  *
@@ -24,10 +34,29 @@ public class Main {
         ActorRef stringer = system.actorOf(
                 SpringExtension.SpringExtProvider.get(system).props("stringer"), "Stringer");
 
-        /*final ActorSystem actorSystem = ActorSystem.create("helloakka");
-        final ActorRef stringer = actorSystem.actorOf(Props.create(Stringer.class, "This string is going to be split and reversed"), "stringer");*/
 
         stringer.tell(Message.SPLIT, ActorRef.noSender());
+
+        //Initialize logger
+        final LoggingAdapter log = Logging.getLogger(system, Main.class);
+
+        FiniteDuration duration = FiniteDuration.create(5, TimeUnit.SECONDS);
+        Future<Object> result = ask(stringer, Message.IS_DONE,
+                Timeout.durationToTimeout(duration));
+
+        try {
+            while(!(Boolean)Await.result(result, duration)){
+                result = ask(stringer, Message.IS_DONE,
+                        Timeout.durationToTimeout(duration));
+            }
+        } catch (Exception e) {
+            log.error("Failed getting result: " + e.getMessage());
+        } finally {
+            log.info("Finished: " + result.value());
+
+            system.shutdown();
+            system.awaitTermination();
+        }
 
     }
 

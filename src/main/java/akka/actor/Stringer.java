@@ -4,8 +4,6 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.message.Message;
 import akka.spring.SpringExtension;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
@@ -50,12 +48,13 @@ public class Stringer extends UntypedActor {
             chunksProcessed++;
             if (numberOfChunks == chunksProcessed) {
                 log.info("String has been processed");
-
-                //getContext().stop(getSelf());
-
-                getContext().system().shutdown();
             }
-        } else {
+        }
+        if (msg == Message.IS_DONE) {
+            //Check If the reverser Actors have finished
+            getSender().tell(numberOfChunks == chunksProcessed, getSelf());
+
+        }else {
             unhandled(msg);
         }
     }
