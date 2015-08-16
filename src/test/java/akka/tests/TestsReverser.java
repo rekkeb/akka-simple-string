@@ -5,42 +5,34 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.Reverser;
 import akka.message.Message;
+import akka.spring.AppConfiguration;
+import akka.spring.SpringExtension;
 import akka.testkit.JavaTestKit;
 import akka.testkit.TestActorRef;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 
-@RunWith(JUnit4.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = AppConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class TestsReverser {
 
-    static ActorSystem system;
+    @Autowired
+    private ActorSystem system;
 
-    @BeforeClass
-    public static void setup() {
-        system = ActorSystem.create();
-    }
-
-    @AfterClass
-    public static void teardown() {
-        //system.shutdown();
-        //system.awaitTermination(Duration.create("10 seconds"));
-
-        JavaTestKit.shutdownActorSystem(system);
-        system = null;
-    }
 
     @Test
     public void testReverseDataFuture() throws Exception {
         new JavaTestKit(system) {{
-            final Props props = Props.create(Reverser.class);
+            final Props props = SpringExtension.SpringExtProvider.get(system).props("reverser");
             final TestActorRef<Reverser> reverser = TestActorRef.create(system, props);
 
             final Future<Object> future = akka.pattern.Patterns.ask(reverser, "abcde", 3000);
@@ -54,7 +46,7 @@ public class TestsReverser {
     @Test
     public void testReverseData() throws Exception {
         new JavaTestKit(system) {{
-            final Props props = Props.create(Reverser.class);
+            final Props props = SpringExtension.SpringExtProvider.get(system).props("reverser");
             final ActorRef reverser = system.actorOf(props);
 
             reverser.tell("abcde", getRef());

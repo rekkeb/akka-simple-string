@@ -40,7 +40,7 @@ public class Main {
         //Initialize logger
         final LoggingAdapter log = Logging.getLogger(system, Main.class);
 
-        FiniteDuration duration = FiniteDuration.create(5, TimeUnit.SECONDS);
+        FiniteDuration duration = FiniteDuration.create(1, TimeUnit.SECONDS);
         Future<Object> result = ask(stringer, Message.IS_DONE,
                 Timeout.durationToTimeout(duration));
 
